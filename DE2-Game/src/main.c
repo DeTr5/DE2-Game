@@ -26,6 +26,7 @@
 #include <uart.h>           // Peter Fleury's UART library
 #include <stdlib.h>         // C library. Needed for number conversions
 #include <oled.h>
+#include "pong_graphics.h"
 
 
 /* Global variables --------------------------------------------------*/
@@ -78,24 +79,11 @@ int main(void)
     oled_init(OLED_DISP_ON);
     oled_clrscr();
 
-    oled_charMode(DOUBLESIZE);
-    oled_puts("OLED disp.");
+    oled_drawLine(63,0,63,63,WHITE);
 
-    oled_charMode(NORMALSIZE);
-
-    // oled_gotoxy(x, y)
-    oled_gotoxy(0, 2);
-    oled_puts("128x64, SHH1106");
-
-    // oled_drawLine(x1, y1, x2, y2, color)
-    oled_drawLine(0, 25, 127, 25, WHITE);
-
-    oled_gotoxy(0,4);
-    oled_puts("Temperature: ");
-    oled_gotoxy(0,5);
-    oled_puts("Humidity:    ");
-
-    oled_drawRect(0,0,127,62,WHITE);
+    drawPaddle(0,20);
+    drawPaddle(1,30);
+    drawBall(20,40);
 
     // Copy buffer to display RAM
     oled_display();
@@ -108,35 +96,7 @@ int main(void)
 
     // Infinite loop
     while (1) {
-        if (new_sensor_data == 1) {
-            itoa(dht12.temp_int, string, 10);
-            uart_puts(string);
-            uart_puts(".");
-            oled_gotoxy(13,4);
-            oled_puts(string);
-            oled_puts(".");
-            itoa(dht12.temp_dec, string, 10);
-            uart_puts(string);
-            uart_puts(" °C\t");
-            oled_puts(string);
-            oled_puts(" °C");
 
-            itoa(dht12.hum_int, string, 10);
-            uart_puts(string);
-            uart_puts(".");
-            oled_gotoxy(13,5);
-            oled_puts(string);
-            oled_puts(".");
-            itoa(dht12.hum_dec, string, 10);
-            uart_puts(string);
-            uart_puts(" %\r\n");
-            oled_puts(string);
-            oled_puts(" %");
-            
-            oled_display();
-            // Do not print it again and wait for the new data
-            new_sensor_data = 0;
-        }
     }
 
     // Will never reach this
