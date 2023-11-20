@@ -97,7 +97,7 @@ int main(void)
 /* Interrupt service routines ----------------------------------------*/
 /**********************************************************************
 * Function: Timer/Counter1 overflow interrupt
-* Purpose:  Read temperature and humidity from DHT12, SLA = 0x5c.
+* Purpose:  
 **********************************************************************/
 ISR(TIMER1_OVF_vect)
 {
