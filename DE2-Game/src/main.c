@@ -87,6 +87,8 @@ int main(void)
         eraseBall(ballPosX, ballPosY);
         calcBallPos();
         drawBall(ballPosX, ballPosY);
+
+        oled_display();
     }
 
     // Will never reach this
