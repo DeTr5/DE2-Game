@@ -18,3 +18,8 @@ void drawBall(uint8_t x, uint8_t y)
 {
     oled_fillCircle(x, y, BALL_SIZE, WHITE);
 }
+
+void eraseBall(uint8_t x, uint8_t y)
+{
+    oled_fillCircle(x, y, BALL_SIZE, BLACK);
+}

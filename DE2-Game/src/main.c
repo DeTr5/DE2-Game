@@ -1,7 +1,7 @@
 /***********************************************************************
  * 
- * The I2C (TWI) bus scanner tests all addresses and detects devices
- * that are connected to the SDA and SCL signals.
+ * 
+ * 
  * 
  * ATmega328P (Arduino Uno), 16 MHz, PlatformIO
  *
@@ -30,36 +30,24 @@
 
 
 /* Global variables --------------------------------------------------*/
-// Declaration of "dht12" variable with structure "DHT_values_structure"
-struct DHT_values_structure {
-   uint8_t hum_int;
-   uint8_t hum_dec;
-   uint8_t temp_int;
-   uint8_t temp_dec;
-   uint8_t checksum;
-} dht12;
+uint8_t directionX = 1;
+uint8_t directionY = -1;
+uint8_t ballPosX = 20;
+uint8_t ballPosY = 40;
+float ballSpeed = 1;
 
-// Flag for printing new data from sensor
-volatile uint8_t new_sensor_data = 0;
-
-
-// Slave and internal addresses of temperature/humidity sensor DHT12
+// OLED address
 #define SENSOR_ADR 0x3c
-#define SENSOR_HUM_MEM 0
-#define SENSOR_TEMP_MEM 2
-#define SENSOR_CHECKSUM 4
-
 
 /* Function definitions ----------------------------------------------*/
 /**********************************************************************
 * Function: Main function where the program execution begins
-* Purpose:  Wait for new data from the sensor and sent them to UART.
+* Purpose:  
 * Returns:  none
 **********************************************************************/
 int main(void)
 {
-    char string[2];  // String for converting numbers by itoa()
-
+    
     // TWI
     twi_init();
 
@@ -70,20 +58,20 @@ int main(void)
 
     // Test if sensor is ready
     if (twi_test_address(SENSOR_ADR) == 0)
-        uart_puts("I2C sensor detected\r\n");
+        uart_puts("OLED display detected\r\n");
     else {
-        uart_puts("[ERROR] I2C device not detected\r\n");
+        uart_puts("[ERROR] OLED display not detected\r\n");
         while (1);
     }
 
     oled_init(OLED_DISP_ON);
     oled_clrscr();
 
-    oled_drawLine(63,0,63,63,WHITE);
+    oled_drawLine(63, 0, 63, 63, WHITE);
 
-    drawPaddle(0,20);
-    drawPaddle(1,30);
-    drawBall(20,40);
+    drawPaddle(0, 20);
+    drawPaddle(1, 30);
+    drawBall(ballPosX, ballPosY);
 
     // Copy buffer to display RAM
     oled_display();
@@ -96,7 +84,9 @@ int main(void)
 
     // Infinite loop
     while (1) {
-
+        eraseBall(ballPosX, ballPosY);
+        calcBallPos();
+        drawBall(ballPosX, ballPosY);
     }
 
     // Will never reach this
@@ -111,21 +101,12 @@ int main(void)
 **********************************************************************/
 ISR(TIMER1_OVF_vect)
 {
-    // Test ACK from sensor
-    twi_start();
-    if (twi_write((SENSOR_ADR<<1) | TWI_WRITE) == 0) {
-        // Set internal memory location
-        twi_write(SENSOR_HUM_MEM);
-        twi_stop();
-        // Read data from internal memory
-        twi_start();
-        twi_write((SENSOR_ADR<<1) | TWI_READ);
-        dht12.hum_int = twi_read(TWI_ACK);
-        dht12.hum_dec = twi_read(TWI_ACK);
-        dht12.temp_int = twi_read(TWI_ACK);
-        dht12.temp_dec = twi_read(TWI_NACK);
-        
-        new_sensor_data = 1;
-    }
-    twi_stop();
+    
+}
+
+
+void calcBallPos()
+{
+    ballPosX += directionX * ballSpeed;
+    ballPosY += directionY * ballSpeed;
 }
