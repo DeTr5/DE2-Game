@@ -1,5 +1,4 @@
 #include "pong_graphics.h"
-#include <oled.h>
 
 void drawPaddle(uint8_t player, uint8_t y)
 {

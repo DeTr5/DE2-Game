@@ -2,6 +2,7 @@
 #define PONG_GRAPHICS_H
 
 #include <inttypes.h>
+#include <oled.h>
 
 #define PADDLE_SIZE 10
 #define BALL_SIZE 2
