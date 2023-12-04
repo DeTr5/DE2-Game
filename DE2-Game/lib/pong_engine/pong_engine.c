@@ -4,14 +4,15 @@ uint8_t directionX = 1;
 uint8_t directionY = 1;
 uint8_t ballPosX = 63;
 uint8_t ballPosY = 31;
-uint8_t ballSpeed = 4;
-int8_t paddle1Pos = 28;
+uint8_t ballSpeed = 1;
+int8_t paddle1Pos = 40;
 int8_t paddle2Pos = 28;
 uint8_t paddleSpeed = 4;
 uint8_t isBehindPaddle = 0;
 uint8_t isGameOver = 0;
 uint8_t score1 = 0;
 uint8_t score2 = 0;
+uint8_t bounces = 0;
 
 void borderCollision()
 {
@@ -25,17 +26,6 @@ void borderCollision()
         ballPosY = DISPLAY_HEIGHT - 2 - BALL_SIZE;
         directionY = -directionY;
     }
-    if(isBehindPaddle)
-    {
-        if(ballPosX <= BALL_SIZE)
-        {          
-            directionX = -1;
-        }
-        else if(ballPosX >= DISPLAY_WIDTH - BALL_SIZE - 1)
-        {
-            directionX = 1;
-        }
-    }    
 }
 
 void paddleCollision()
@@ -46,6 +36,7 @@ void paddleCollision()
         {
             ballPosX = PADDLE_OFFSET + BALL_SIZE + 3;
             directionX = -directionX;
+            bounces++;
         }
         else
         {
@@ -60,6 +51,7 @@ void paddleCollision()
         {
             ballPosX = DISPLAY_WIDTH - 3 - PADDLE_OFFSET - BALL_SIZE;
             directionX = -directionX;
+            bounces++;
         }
         else
         {
@@ -83,30 +75,25 @@ void calcBallPos()
 
 void reset()
 {   
-    init();
+    oled_clrscr();
+    
     eraseBall(ballPosX, ballPosY);
+    erasePaddle(0, paddle1Pos);
+    erasePaddle(1, paddle2Pos);
+    
+    if(bounces % 10 == 0 && bounces != 0)ballSpeed++;
+
     directionY = -directionY;
     ballPosX = 63;
     ballPosY = 31;
-    paddle1Pos = 28;
+    paddle1Pos = 22;
     paddle2Pos = 28;
     isBehindPaddle = 0;
     isGameOver = 0;
-}
-
-void init()
-{
-    char string[2];
-
-    oled_clrscr();
+    bounces = 0;
 
     oled_drawLine(63, 0, 63, 63, WHITE);
-    oled_gotoxy(8, 0);
-    itoa(score1, string, 10);
-    oled_puts(string);
-    oled_gotoxy(12, 0);
-    itoa(score2, string, 10);
-    oled_puts(string);
+    displayScore();
 
     drawPaddle(0, paddle1Pos);
     drawPaddle(1, paddle2Pos);
@@ -114,4 +101,15 @@ void init()
 
     // Copy buffer to display RAM
     oled_display();
+}
+
+void displayScore()
+{
+    char string[2];    
+    oled_gotoxy(8, 0);
+    itoa(score1, string, 10);
+    oled_puts(string);
+    oled_gotoxy(12, 0);
+    itoa(score2, string, 10);
+    oled_puts(string);
 }

@@ -16,11 +16,12 @@ extern uint8_t isBehindPaddle;
 extern uint8_t isGameOver;
 extern uint8_t score1;
 extern uint8_t score2;
+extern uint8_t bounces;
 
 extern void borderCollision();
 extern void paddleCollision();
 extern void calcBallPos();
 extern void reset();
-extern void init();
+extern void displayScore();
 
 #endif

@@ -42,14 +42,21 @@ uint8_t paddleSpeed = 4;
 uint8_t isBehindPaddle = 0;
 uint8_t isGameOver = 0; */
 
+//Game Parameters
+#define  STARTING_BALL_POS_X = 20;
+#define  STARTING_BALL_POS_Y = 40;
+#define  DEFAULT_BALL_SPEED = 4;
+#define  DEFAULT_PADDLE_POS = 30;
+#define  DEFAULT_PADDLE+SPEED = 4;
+
 // OLED address
-#define SENSOR_ADR 0x3c
+#define OLED_ADR 0x3c
 
 //Buttons
-#define PADDLE1_UP 0
-#define PADDLE1_DOWN 1
-#define PADDLE2_UP 2
-#define PADDLE2_DOWN 3
+#define PADDLE1_UP 4
+#define PADDLE1_DOWN 5
+#define PADDLE2_UP 6
+#define PADDLE2_DOWN 7
 
 /* Function definitions ----------------------------------------------*/
 
@@ -77,7 +84,7 @@ int main(void)
     twi_init();
 
     oled_init(OLED_DISP_ON);
-    init();
+    reset();
 
     sei();
 
@@ -103,46 +110,43 @@ ISR(TIMER0_OVF_vect)
         erasePaddle(0, paddle1Pos);
         if(paddle1Pos - paddleSpeed <= 0) paddle1Pos = 0;
         else paddle1Pos -= paddleSpeed;
-        //drawPaddle(0, paddle1Pos);
+        drawPaddle(0, paddle1Pos);
     }
     if(!GPIO_read(&PINB, PADDLE1_DOWN) && paddle1Pos <= DISPLAY_HEIGHT-2-PADDLE_SIZE)
     {
         erasePaddle(0, paddle1Pos);
         if(paddle1Pos + paddleSpeed >= DISPLAY_HEIGHT-2-PADDLE_SIZE) paddle1Pos = DISPLAY_HEIGHT-2-PADDLE_SIZE;
         else paddle1Pos += paddleSpeed;
-        //drawPaddle(0, paddle1Pos);
+        drawPaddle(0, paddle1Pos);
     }
     if(!GPIO_read(&PINB, PADDLE2_UP) && paddle2Pos >= 0)
     {
         erasePaddle(1, paddle2Pos);
         if(paddle2Pos - paddleSpeed <= 0) paddle2Pos = 0;
         else paddle2Pos -= paddleSpeed;
-        //drawPaddle(1, paddle2Pos);
+        drawPaddle(1, paddle2Pos);
     }
     if(!GPIO_read(&PINB, PADDLE2_DOWN) && paddle2Pos <= DISPLAY_HEIGHT-2-PADDLE_SIZE)
     {
         erasePaddle(1, paddle2Pos);
         if(paddle2Pos + paddleSpeed >= DISPLAY_HEIGHT-2-PADDLE_SIZE) paddle2Pos = DISPLAY_HEIGHT-2-PADDLE_SIZE;
         else paddle2Pos += paddleSpeed;
-        //drawPaddle(1, paddle2Pos);
+        drawPaddle(1, paddle2Pos);
     }
 
-    eraseBall(ballPosX, ballPosY);
-    calcBallPos();
-    drawBall(ballPosX, ballPosY);
-    drawPaddle(0, paddle1Pos);
-    drawPaddle(1, paddle2Pos);
-    oled_drawLine(63, 0, 63, 63, WHITE);
+    if(!isGameOver)
+    {
+        eraseBall(ballPosX, ballPosY);
+        calcBallPos();
+        drawBall(ballPosX, ballPosY);
+        oled_drawLine(63, 0, 63, 63, WHITE);
+        displayScore();
+    }    
 
     oled_display();
 }
 
 /*ISR(TIMER1_OVF_vect)
 {
-    eraseBall(ballPosX, ballPosY);
-    calcBallPos();
-    drawBall(ballPosX, ballPosY);
-    oled_drawLine(63, 0, 63, 63, WHITE);
-
-    oled_display();
+    
 }*/
