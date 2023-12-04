@@ -28,16 +28,12 @@ void borderCollision()
     if(isBehindPaddle)
     {
         if(ballPosX <= BALL_SIZE)
-        {
-            score2++;
+        {          
             directionX = -1;
-            isGameOver = 1;
         }
         else if(ballPosX >= DISPLAY_WIDTH - BALL_SIZE - 1)
         {
-            score1++;
             directionX = 1;
-            isGameOver = 1;
         }
     }    
 }
@@ -46,7 +42,7 @@ void paddleCollision()
 {
     if(ballPosX <= PADDLE_OFFSET + BALL_SIZE + 3)
     {
-        if(ballPosY >= paddle1Pos && ballPosY <= paddle1Pos + PADDLE_SIZE)
+        if(ballPosY >= paddle1Pos && ballPosY <= paddle1Pos + PADDLE_SIZE + 1)
         {
             ballPosX = PADDLE_OFFSET + BALL_SIZE + 3;
             directionX = -directionX;
@@ -54,11 +50,13 @@ void paddleCollision()
         else
         {
             isBehindPaddle = 1;
+            score2++;            
+            isGameOver = 1;
         }
     }
     else if(ballPosX >= DISPLAY_WIDTH - 3 - PADDLE_OFFSET - BALL_SIZE)
     {
-        if(ballPosY >= paddle2Pos && ballPosY <= paddle2Pos + PADDLE_SIZE)
+        if(ballPosY >= paddle2Pos && ballPosY <= paddle2Pos + PADDLE_SIZE + 1)
         {
             ballPosX = DISPLAY_WIDTH - 3 - PADDLE_OFFSET - BALL_SIZE;
             directionX = -directionX;
@@ -66,6 +64,8 @@ void paddleCollision()
         else
         {
             isBehindPaddle = 1;
+            score1++;
+            isGameOver = 1;
         }
     }
 }
@@ -84,6 +84,7 @@ void calcBallPos()
 void reset()
 {   
     init();
+    eraseBall(ballPosX, ballPosY);
     directionY = -directionY;
     ballPosX = 63;
     ballPosY = 31;

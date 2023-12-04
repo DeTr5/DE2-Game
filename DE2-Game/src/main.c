@@ -84,10 +84,6 @@ int main(void)
     // Infinite loop
     while (1) {}
 
-    /*oled_clrscr();
-    oled_gotoxy(30,60);
-    oled_puts("GAME OVER");*/
-
     // Will never reach this
     return 0;
 }
