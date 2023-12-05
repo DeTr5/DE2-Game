@@ -120,39 +120,7 @@ void paddleInput()
         else paddle2Pos += paddleSpeed;
         drawPaddle(1, paddle2Pos);
     }
-} 
-
-void keyboardInput()
-{
-    if(uart_getc() == 's' && paddle1Pos >= 0)
-    {
-        erasePaddle(0, paddle1Pos);
-        if(paddle1Pos - paddleSpeed <= 0) paddle1Pos = 0;
-        else paddle1Pos -= paddleSpeed;
-        drawPaddle(0, paddle1Pos);
-    }
-    /*if(!GPIO_read(&PINB, PADDLE1_DOWN) && paddle1Pos <= DISPLAY_HEIGHT-2-PADDLE_SIZE)
-    {
-        erasePaddle(0, paddle1Pos);
-        if(paddle1Pos + paddleSpeed >= DISPLAY_HEIGHT-2-PADDLE_SIZE) paddle1Pos = DISPLAY_HEIGHT-2-PADDLE_SIZE;
-        else paddle1Pos += paddleSpeed;
-        drawPaddle(0, paddle1Pos);
-    }
-    if(!GPIO_read(&PINB, PADDLE2_UP) && paddle2Pos >= 0)
-    {
-        erasePaddle(1, paddle2Pos);
-        if(paddle2Pos - paddleSpeed <= 0) paddle2Pos = 0;
-        else paddle2Pos -= paddleSpeed;
-        drawPaddle(1, paddle2Pos);
-    }
-    if(!GPIO_read(&PINB, PADDLE2_DOWN) && paddle2Pos <= DISPLAY_HEIGHT-2-PADDLE_SIZE)
-    {
-        erasePaddle(1, paddle2Pos);
-        if(paddle2Pos + paddleSpeed >= DISPLAY_HEIGHT-2-PADDLE_SIZE) paddle2Pos = DISPLAY_HEIGHT-2-PADDLE_SIZE;
-        else paddle2Pos += paddleSpeed;
-        drawPaddle(1, paddle2Pos);
-    }*/
-} 
+}
 
 /**********************************************************************
 * Function: Main function where the program execution begins
@@ -165,9 +133,6 @@ int main(void)
     GPIO_mode_input_pullup(&DDRB, PADDLE1_DOWN);
     GPIO_mode_input_pullup(&DDRB, PADDLE2_UP);
     GPIO_mode_input_pullup(&DDRB, PADDLE2_DOWN);
-
-    // Initialize USART to asynchronous, 8N1, 9600
-    uart_init(UART_BAUD_SELECT(9600, F_CPU));
     
     // Timer0
     TIM0_OVF_16MS
@@ -204,7 +169,6 @@ ISR(TIMER0_OVF_vect)
     {
         eraseBall(ballPosX, ballPosY);
         paddleInput();
-        keyboardInput();
         for(uint8_t i = 0; i < ballSpeed; i++)
         {
             borderCollision(ballPosY, &directionY);
@@ -239,7 +203,11 @@ ISR(TIMER0_OVF_vect)
             break;
 
         case 0:
-            //if(GPIO_read(&PINB, PADDLE1_UP) || GPIO_read(&PINB, PADDLE1_DOWN) || GPIO_read(&PINB, PADDLE2_UP) || GPIO_read(&PINB, PADDLE2_DOWN)) reset();
+            if(!GPIO_read(&PINB, PADDLE1_UP) || !GPIO_read(&PINB, PADDLE1_DOWN) || !GPIO_read(&PINB, PADDLE2_UP) || !GPIO_read(&PINB, PADDLE2_DOWN))
+            {
+                //reset();
+                //isGameOver = 0;
+            } 
             break;
         
         default:
