@@ -20,7 +20,7 @@ int8_t paddleCollision(uint8_t player, uint8_t ballPosX, uint8_t ballPosY, uint8
     switch (player)
     {
     case 0:
-        if(ballPosX <= PADDLE_OFFSET + BALL_SIZE + PADDLE_WIDTH)
+        if(ballPosX <= PADDLE_OFFSET + BALL_SIZE + PADDLE_WIDTH +1)
         {
             if(ballPosY >= paddlePos && ballPosY <= paddlePos + PADDLE_SIZE + 1)
             {

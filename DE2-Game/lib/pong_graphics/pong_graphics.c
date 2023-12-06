@@ -46,3 +46,46 @@ void displayScore(uint8_t score1, uint8_t score2)
     itoa(score2, string, 10);
     oled_puts(string);
 }
+
+void playerWon(uint8_t player)
+{
+    switch (player)
+    {
+    case 1:
+        oled_gotoxy(4, 2);
+        oled_puts("PLAYER 1 WON!");
+        break;
+
+    case 2:
+        oled_gotoxy(4, 2);
+        oled_puts("PLAYER 2 WON!");
+        break;
+    
+    default:
+        break;
+    }
+    oled_gotoxy(2, 5);
+    oled_puts("Press any button");
+    oled_gotoxy(2, 6);
+    oled_puts("to return to Menu");
+}
+
+void ballOut()
+{
+    oled_gotoxy(2, 4);
+    oled_puts("Press any button");
+    oled_gotoxy(6, 5);
+    oled_puts("to reset");
+}
+
+void displayMenu()
+{
+    oled_gotoxy(6, 0);
+    oled_charMode(DOUBLESIZE);
+    oled_puts("PONG");
+    oled_charMode(NORMALSIZE);
+    oled_gotoxy(2, 3);
+    oled_puts("Press any button");
+    oled_gotoxy(6, 4);
+    oled_puts("to START");
+}

@@ -14,5 +14,8 @@ extern void erasePaddle(uint8_t player, uint8_t y);
 extern void drawBall(uint8_t x, uint8_t y);
 extern void eraseBall(uint8_t x, uint8_t y);
 extern void displayScore(uint8_t score1, uint8_t score2);
+extern void playerWon(uint8_t player);
+extern void ballOut();
+extern void displayMenu();
 
 #endif

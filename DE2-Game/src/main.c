@@ -39,9 +39,12 @@
 #define  PLAYER_TWO 1
 #define  DELAY_BETWEEN_GAMES 5 //in frames
 #define  BOUNCES_FOR_SPEEDUP 5
+#define  POINTS_TO_WIN 5
+
 
 //Menu
 #define  IN_GAME 0
+#define  MAIN_MENU 1
 
 // OLED address
 #define OLED_ADR 0x3c
@@ -68,6 +71,8 @@ uint8_t score1 = 0;
 uint8_t score2 = 0;
 uint8_t bounces = 1;
 uint8_t gameOverDelayCounter = 5;
+uint8_t gameState = 1;
+uint8_t isWinner = 0;
 
 /* Function definitions ----------------------------------------------*/
 void reset()
@@ -82,6 +87,8 @@ void reset()
     isBehindPaddle = 0;
     bounces = 1;
     gameOverDelayCounter = 5;
+    isGameOver = 0;
+    isWinner = 0;
 
     oled_drawLine(63, 0, 63, 63, WHITE);
     displayScore(score1, score2);
@@ -150,7 +157,6 @@ int main(void)
     twi_init();
 
     oled_init(OLED_DISP_ON);
-    reset();
 
     sei();
 
@@ -169,80 +175,108 @@ int main(void)
 **********************************************************************/
 ISR(TIMER1_OVF_vect)
 {
-    if(!isGameOver)
+    switch (gameState)
     {
-        eraseBall(ballPosX, ballPosY);
-        paddleInput();
-        for(uint8_t i = 0; i < ballSpeed; i++)
+    case MAIN_MENU:
+        displayMenu();
+        if(!GPIO_read(&PINB, PADDLE1_UP) || !GPIO_read(&PINB, PADDLE1_DOWN) || !GPIO_read(&PINB, PADDLE2_UP) || !GPIO_read(&PINB, PADDLE2_DOWN))
         {
-            borderCollision(ballPosY, &directionY);
-            if(!isBehindPaddle)
-            {
-                if(paddleCollision(0, ballPosX, ballPosY, paddle1Pos, &directionX, &isBehindPaddle))
-                {
-                    bounces++;
-                    if(bounces % BOUNCES_FOR_SPEEDUP == 0) ballSpeed++;           
-                } 
-                if(paddleCollision(1, ballPosX, ballPosY, paddle2Pos, &directionX, &isBehindPaddle))
-                {
-                    bounces++;
-                    if(bounces % BOUNCES_FOR_SPEEDUP == 0) ballSpeed++;
-                }
-            }
-            else
-            {
-                isGameOver = 1;
-                i = ballSpeed;
-                if(ballPosX < 32) score2++;
-                else score1++;
-            }
-            calcBallPos(directionX, directionY, &ballPosX, &ballPosY);
+            gameState = IN_GAME;
+            reset();
         }
-        drawBall(ballPosX, ballPosY);
-        oled_drawLine(63, 0, 63, 63, WHITE);
-        displayScore(score1, score2);        
-    }
-    else
-    {
-        switch (gameOverDelayCounter)
-        {
-        case 1:
-            oled_gotoxy(2, 3);
-            oled_puts("Press any button");
-            oled_gotoxy(5, 4);
-            oled_puts("to reset");
-            gameOverDelayCounter--;
-            break;
+        break;
 
-        case 0:
-            if(!GPIO_read(&PINB, PADDLE1_UP) || !GPIO_read(&PINB, PADDLE1_DOWN) || !GPIO_read(&PINB, PADDLE2_UP) || !GPIO_read(&PINB, PADDLE2_DOWN))
-            {
-                reset();
-                isGameOver = 0;
-            } 
-            break;
-        
-        default:
+    case IN_GAME:
+        if(!isGameOver)
+        {
             eraseBall(ballPosX, ballPosY);
-            for (uint8_t i = 0; i < ballSpeed; i++)
+            paddleInput();
+            for(uint8_t i = 0; i < ballSpeed; i++)
             {
-                borderCollision(ballPosY, &directionY);                
+                borderCollision(ballPosY, &directionY);
+                if(!isBehindPaddle)
+                {
+                    if(paddleCollision(0, ballPosX, ballPosY, paddle1Pos, &directionX, &isBehindPaddle))
+                    {
+                        bounces++;
+                        if(bounces % BOUNCES_FOR_SPEEDUP == 0) ballSpeed++;           
+                    } 
+                    if(paddleCollision(1, ballPosX, ballPosY, paddle2Pos, &directionX, &isBehindPaddle))
+                    {
+                        bounces++;
+                        if(bounces % BOUNCES_FOR_SPEEDUP == 0) ballSpeed++;
+                    }
+                }
+                else
+                {
+                    isGameOver = 1;
+                    i = ballSpeed;
+                    if(ballPosX < 32) score2++;
+                    else score1++;
+                }
                 calcBallPos(directionX, directionY, &ballPosX, &ballPosY);
             }
             drawBall(ballPosX, ballPosY);
             oled_drawLine(63, 0, 63, 63, WHITE);
-            displayScore(score1, score2);
-            gameOverDelayCounter--;
-            break;
+            displayScore(score1, score2);        
         }
+        else
+        {
+            switch (gameOverDelayCounter)
+            {
+            case 1:
+                if(score1 == POINTS_TO_WIN || score2 == POINTS_TO_WIN)
+                {
+                    isWinner = 1;
+                    if(score1 == POINTS_TO_WIN)
+                    {
+                        playerWon(1);
+                    }
+                    else
+                    {
+                        playerWon(2);
+                    }
+                    gameOverDelayCounter--;
+                }
+                else
+                {
+                    ballOut();
+                    gameOverDelayCounter--;
+                }
+                break;
+    
+            case 0:
+                if(!GPIO_read(&PINB, PADDLE1_UP) || !GPIO_read(&PINB, PADDLE1_DOWN) || !GPIO_read(&PINB, PADDLE2_UP) || !GPIO_read(&PINB, PADDLE2_DOWN))
+                {                                
+                    if(isWinner)
+                    {
+                        score1 = 0;
+                        score2 = 0;
+                        gameState = MAIN_MENU;
+                        oled_clrscr();
+                    } 
+                    else reset();
+                } 
+                break;
+            
+            default:
+                eraseBall(ballPosX, ballPosY);
+                for (uint8_t i = 0; i < ballSpeed; i++)
+                {
+                    borderCollision(ballPosY, &directionY);                
+                    calcBallPos(directionX, directionY, &ballPosX, &ballPosY);
+                }
+                drawBall(ballPosX, ballPosY);
+                oled_drawLine(63, 0, 63, 63, WHITE);
+                displayScore(score1, score2);
+                gameOverDelayCounter--;
+                break;
+            }
+        }
+        break;
+    
+    default:
+        break;
     }
-
-    //debugging
-    /*char string[2];    
-    oled_gotoxy(2, 7);
-    oled_puts("BS: ");
-    itoa(ballSpeed, string, 10);
-    oled_puts(string);*/
-
     oled_display();
 }
