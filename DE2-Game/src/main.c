@@ -30,23 +30,27 @@
 #include "pong_physics.h"
 
 //Game Parameters
-#define  STARTING_BALL_POS_X 20;
-#define  STARTING_BALL_POS_Y 40;
-#define  DEFAULT_BALL_SPEED 4;
-#define  DEFAULT_PADDLE_POS 30;
-#define  DEFAULT_PADDLE_SPEED 4;
-#define  PLAYER_ONE 0;
-#define  PLAYER_TWO 1;
-#define  DELAY_BETWEEN_GAMES 5; //in fames
+#define  STARTING_BALL_POS_X 20
+#define  STARTING_BALL_POS_Y 40
+#define  DEFAULT_BALL_SPEED 4
+#define  DEFAULT_PADDLE_POS 30
+#define  DEFAULT_PADDLE_SPEED 4
+#define  PLAYER_ONE 0
+#define  PLAYER_TWO 1
+#define  DELAY_BETWEEN_GAMES 5 //in frames
+#define  BOUNCES_FOR_SPEEDUP 5
+
+//Menu
+#define  IN_GAME 0
 
 // OLED address
 #define OLED_ADR 0x3c
 
 //Buttons
-#define PADDLE1_UP 4
-#define PADDLE1_DOWN 5
-#define PADDLE2_UP 6
-#define PADDLE2_DOWN 7
+#define PADDLE1_UP 0
+#define PADDLE1_DOWN 1
+#define PADDLE2_UP 2
+#define PADDLE2_DOWN 3
 
 /* Global variables --------------------------------------------------*/
 
@@ -62,7 +66,7 @@ uint8_t isBehindPaddle = 0;
 uint8_t isGameOver = 0;
 uint8_t score1 = 0;
 uint8_t score2 = 0;
-uint8_t bounces = 0;
+uint8_t bounces = 1;
 uint8_t gameOverDelayCounter = 5;
 
 /* Function definitions ----------------------------------------------*/
@@ -76,7 +80,7 @@ void reset()
     paddle1Pos = DEFAULT_PADDLE_POS;
     paddle2Pos = DEFAULT_PADDLE_POS;
     isBehindPaddle = 0;
-    bounces = 0;
+    bounces = 1;
     gameOverDelayCounter = 5;
 
     oled_drawLine(63, 0, 63, 63, WHITE);
@@ -135,8 +139,8 @@ int main(void)
     GPIO_mode_input_pullup(&DDRB, PADDLE2_DOWN);
     
     // Timer0
-    TIM0_OVF_16MS
-    TIM0_OVF_ENABLE
+    TIM1_OVF_33MS
+    TIM1_OVF_ENABLE
 
     // Timer1
     /*TIM1_OVF_33MS
@@ -163,7 +167,7 @@ int main(void)
 * Function: Timer/Counter1 overflow interrupt
 * Purpose:  
 **********************************************************************/
-ISR(TIMER0_OVF_vect)
+ISR(TIMER1_OVF_vect)
 {
     if(!isGameOver)
     {
@@ -174,12 +178,21 @@ ISR(TIMER0_OVF_vect)
             borderCollision(ballPosY, &directionY);
             if(!isBehindPaddle)
             {
-                if(paddleCollision(0, ballPosX, ballPosY, paddle1Pos, &directionX, &isBehindPaddle)) bounces++;
-                if(paddleCollision(1, ballPosX, ballPosY, paddle2Pos, &directionX, &isBehindPaddle)) bounces++;
+                if(paddleCollision(0, ballPosX, ballPosY, paddle1Pos, &directionX, &isBehindPaddle))
+                {
+                    bounces++;
+                    if(bounces % BOUNCES_FOR_SPEEDUP == 0) ballSpeed++;           
+                } 
+                if(paddleCollision(1, ballPosX, ballPosY, paddle2Pos, &directionX, &isBehindPaddle))
+                {
+                    bounces++;
+                    if(bounces % BOUNCES_FOR_SPEEDUP == 0) ballSpeed++;
+                }
             }
             else
             {
                 isGameOver = 1;
+                i = ballSpeed;
                 if(ballPosX < 32) score2++;
                 else score1++;
             }
@@ -187,10 +200,9 @@ ISR(TIMER0_OVF_vect)
         }
         drawBall(ballPosX, ballPosY);
         oled_drawLine(63, 0, 63, 63, WHITE);
-        displayScore(score1, score2);
+        displayScore(score1, score2);        
     }
-
-    if (isGameOver)
+    else
     {
         switch (gameOverDelayCounter)
         {
@@ -205,8 +217,8 @@ ISR(TIMER0_OVF_vect)
         case 0:
             if(!GPIO_read(&PINB, PADDLE1_UP) || !GPIO_read(&PINB, PADDLE1_DOWN) || !GPIO_read(&PINB, PADDLE2_UP) || !GPIO_read(&PINB, PADDLE2_DOWN))
             {
-                //reset();
-                //isGameOver = 0;
+                reset();
+                isGameOver = 0;
             } 
             break;
         
@@ -224,10 +236,13 @@ ISR(TIMER0_OVF_vect)
             break;
         }
     }
+
+    //debugging
+    /*char string[2];    
+    oled_gotoxy(2, 7);
+    oled_puts("BS: ");
+    itoa(ballSpeed, string, 10);
+    oled_puts(string);*/
+
     oled_display();
 }
-
-/*ISR(TIMER1_OVF_vect)
-{
-    
-}*/

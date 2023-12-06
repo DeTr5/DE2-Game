@@ -33,6 +33,7 @@ int8_t paddleCollision(uint8_t player, uint8_t ballPosX, uint8_t ballPosY, uint8
                 return 0;
             }
         }
+        return 0;
         break;
 
     case 1:
@@ -49,9 +50,11 @@ int8_t paddleCollision(uint8_t player, uint8_t ballPosX, uint8_t ballPosY, uint8
                 return 0;
             }
         }
+        return 0;
         break;
     
     default:
+        return 0;
         break;
     }    
     
