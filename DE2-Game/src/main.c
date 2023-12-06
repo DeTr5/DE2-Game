@@ -27,31 +27,100 @@
 #include <stdlib.h>         // C library. Needed for number conversions
 #include <oled.h>
 #include <gpio.h>
-#include "pong_engine.h"
+#include "pong_physics.h"
 
-
-/* Global variables --------------------------------------------------*/
-/* uint8_t directionX = 1;
-uint8_t directionY = 1;
-uint8_t ballPosX = 20;
-uint8_t ballPosY = 40;
-uint8_t ballSpeed = 4;
-int8_t paddle1Pos = 30;
-int8_t paddle2Pos = 30;
-uint8_t paddleSpeed = 4;
-uint8_t isBehindPaddle = 0;
-uint8_t isGameOver = 0; */
+//Game Parameters
+#define  STARTING_BALL_POS_X 20;
+#define  STARTING_BALL_POS_Y 40;
+#define  DEFAULT_BALL_SPEED 4;
+#define  DEFAULT_PADDLE_POS 30;
+#define  DEFAULT_PADDLE_SPEED 4;
+#define  PLAYER_ONE 0;
+#define  PLAYER_TWO 1;
+#define  DELAY_BETWEEN_GAMES 5; //in fames
 
 // OLED address
-#define SENSOR_ADR 0x3c
+#define OLED_ADR 0x3c
 
 //Buttons
-#define PADDLE1_UP 0
-#define PADDLE1_DOWN 1
-#define PADDLE2_UP 2
-#define PADDLE2_DOWN 3
+#define PADDLE1_UP 4
+#define PADDLE1_DOWN 5
+#define PADDLE2_UP 6
+#define PADDLE2_DOWN 7
+
+/* Global variables --------------------------------------------------*/
+
+int8_t directionX = 1;
+int8_t directionY = -1;
+uint8_t ballPosX = STARTING_BALL_POS_X;
+uint8_t ballPosY = STARTING_BALL_POS_Y;
+uint8_t ballSpeed = DEFAULT_BALL_SPEED;
+int8_t paddle1Pos = DEFAULT_PADDLE_POS;
+int8_t paddle2Pos = DEFAULT_PADDLE_POS;
+uint8_t paddleSpeed = DEFAULT_PADDLE_SPEED;
+uint8_t isBehindPaddle = 0;
+uint8_t isGameOver = 0;
+uint8_t score1 = 0;
+uint8_t score2 = 0;
+uint8_t bounces = 0;
+uint8_t gameOverDelayCounter = 5;
 
 /* Function definitions ----------------------------------------------*/
+void reset()
+{   
+    oled_clrscr();
+    directionY = -directionY;
+    ballPosX = 63;
+    ballPosY = 31;
+    ballSpeed = DEFAULT_BALL_SPEED;
+    paddle1Pos = DEFAULT_PADDLE_POS;
+    paddle2Pos = DEFAULT_PADDLE_POS;
+    isBehindPaddle = 0;
+    bounces = 0;
+    gameOverDelayCounter = 5;
+
+    oled_drawLine(63, 0, 63, 63, WHITE);
+    displayScore(score1, score2);
+
+    drawPaddle(0, paddle1Pos);
+    drawPaddle(1, paddle2Pos);
+    drawBall(ballPosX, ballPosY);
+
+    // Copy buffer to display RAM
+    oled_display();
+}
+
+void paddleInput()
+{
+    if(!GPIO_read(&PINB, PADDLE1_UP) && paddle1Pos >= 0)
+    {
+        erasePaddle(0, paddle1Pos);
+        if(paddle1Pos - paddleSpeed <= 0) paddle1Pos = 0;
+        else paddle1Pos -= paddleSpeed;
+        drawPaddle(0, paddle1Pos);
+    }
+    if(!GPIO_read(&PINB, PADDLE1_DOWN) && paddle1Pos <= DISPLAY_HEIGHT-2-PADDLE_SIZE)
+    {
+        erasePaddle(0, paddle1Pos);
+        if(paddle1Pos + paddleSpeed >= DISPLAY_HEIGHT-2-PADDLE_SIZE) paddle1Pos = DISPLAY_HEIGHT-2-PADDLE_SIZE;
+        else paddle1Pos += paddleSpeed;
+        drawPaddle(0, paddle1Pos);
+    }
+    if(!GPIO_read(&PINB, PADDLE2_UP) && paddle2Pos >= 0)
+    {
+        erasePaddle(1, paddle2Pos);
+        if(paddle2Pos - paddleSpeed <= 0) paddle2Pos = 0;
+        else paddle2Pos -= paddleSpeed;
+        drawPaddle(1, paddle2Pos);
+    }
+    if(!GPIO_read(&PINB, PADDLE2_DOWN) && paddle2Pos <= DISPLAY_HEIGHT-2-PADDLE_SIZE)
+    {
+        erasePaddle(1, paddle2Pos);
+        if(paddle2Pos + paddleSpeed >= DISPLAY_HEIGHT-2-PADDLE_SIZE) paddle2Pos = DISPLAY_HEIGHT-2-PADDLE_SIZE;
+        else paddle2Pos += paddleSpeed;
+        drawPaddle(1, paddle2Pos);
+    }
+}
 
 /**********************************************************************
 * Function: Main function where the program execution begins
@@ -77,16 +146,12 @@ int main(void)
     twi_init();
 
     oled_init(OLED_DISP_ON);
-    init();
+    reset();
 
     sei();
 
     // Infinite loop
     while (1) {}
-
-    /*oled_clrscr();
-    oled_gotoxy(30,60);
-    oled_puts("GAME OVER");*/
 
     // Will never reach this
     return 0;
@@ -100,53 +165,69 @@ int main(void)
 **********************************************************************/
 ISR(TIMER0_OVF_vect)
 {
-    if(isGameOver)reset();
-
-    if(!GPIO_read(&PINB, PADDLE1_UP) && paddle1Pos >= 0)
+    if(!isGameOver)
     {
-        erasePaddle(0, paddle1Pos);
-        if(paddle1Pos - paddleSpeed <= 0) paddle1Pos = 0;
-        else paddle1Pos -= paddleSpeed;
-        //drawPaddle(0, paddle1Pos);
-    }
-    if(!GPIO_read(&PINB, PADDLE1_DOWN) && paddle1Pos <= DISPLAY_HEIGHT-2-PADDLE_SIZE)
-    {
-        erasePaddle(0, paddle1Pos);
-        if(paddle1Pos + paddleSpeed >= DISPLAY_HEIGHT-2-PADDLE_SIZE) paddle1Pos = DISPLAY_HEIGHT-2-PADDLE_SIZE;
-        else paddle1Pos += paddleSpeed;
-        //drawPaddle(0, paddle1Pos);
-    }
-    if(!GPIO_read(&PINB, PADDLE2_UP) && paddle2Pos >= 0)
-    {
-        erasePaddle(1, paddle2Pos);
-        if(paddle2Pos - paddleSpeed <= 0) paddle2Pos = 0;
-        else paddle2Pos -= paddleSpeed;
-        //drawPaddle(1, paddle2Pos);
-    }
-    if(!GPIO_read(&PINB, PADDLE2_DOWN) && paddle2Pos <= DISPLAY_HEIGHT-2-PADDLE_SIZE)
-    {
-        erasePaddle(1, paddle2Pos);
-        if(paddle2Pos + paddleSpeed >= DISPLAY_HEIGHT-2-PADDLE_SIZE) paddle2Pos = DISPLAY_HEIGHT-2-PADDLE_SIZE;
-        else paddle2Pos += paddleSpeed;
-        //drawPaddle(1, paddle2Pos);
+        eraseBall(ballPosX, ballPosY);
+        paddleInput();
+        for(uint8_t i = 0; i < ballSpeed; i++)
+        {
+            borderCollision(ballPosY, &directionY);
+            if(!isBehindPaddle)
+            {
+                if(paddleCollision(0, ballPosX, ballPosY, paddle1Pos, &directionX, &isBehindPaddle)) bounces++;
+                if(paddleCollision(1, ballPosX, ballPosY, paddle2Pos, &directionX, &isBehindPaddle)) bounces++;
+            }
+            else
+            {
+                isGameOver = 1;
+                if(ballPosX < 32) score2++;
+                else score1++;
+            }
+            calcBallPos(directionX, directionY, &ballPosX, &ballPosY);
+        }
+        drawBall(ballPosX, ballPosY);
+        oled_drawLine(63, 0, 63, 63, WHITE);
+        displayScore(score1, score2);
     }
 
-    eraseBall(ballPosX, ballPosY);
-    calcBallPos();
-    drawBall(ballPosX, ballPosY);
-    drawPaddle(0, paddle1Pos);
-    drawPaddle(1, paddle2Pos);
-    oled_drawLine(63, 0, 63, 63, WHITE);
+    if (isGameOver)
+    {
+        switch (gameOverDelayCounter)
+        {
+        case 1:
+            oled_gotoxy(2, 3);
+            oled_puts("Press any button");
+            oled_gotoxy(5, 4);
+            oled_puts("to reset");
+            gameOverDelayCounter--;
+            break;
 
+        case 0:
+            if(!GPIO_read(&PINB, PADDLE1_UP) || !GPIO_read(&PINB, PADDLE1_DOWN) || !GPIO_read(&PINB, PADDLE2_UP) || !GPIO_read(&PINB, PADDLE2_DOWN))
+            {
+                //reset();
+                //isGameOver = 0;
+            } 
+            break;
+        
+        default:
+            eraseBall(ballPosX, ballPosY);
+            for (uint8_t i = 0; i < ballSpeed; i++)
+            {
+                borderCollision(ballPosY, &directionY);                
+                calcBallPos(directionX, directionY, &ballPosX, &ballPosY);
+            }
+            drawBall(ballPosX, ballPosY);
+            oled_drawLine(63, 0, 63, 63, WHITE);
+            displayScore(score1, score2);
+            gameOverDelayCounter--;
+            break;
+        }
+    }
     oled_display();
 }
 
 /*ISR(TIMER1_OVF_vect)
 {
-    eraseBall(ballPosX, ballPosY);
-    calcBallPos();
-    drawBall(ballPosX, ballPosY);
-    oled_drawLine(63, 0, 63, 63, WHITE);
-
-    oled_display();
+    
 }*/
