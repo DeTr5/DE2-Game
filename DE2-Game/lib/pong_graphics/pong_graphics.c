@@ -1,5 +1,11 @@
 #include "pong_graphics.h"
 
+/**********************************************************************
+ * Function: drawPaddle()
+ * Purpose:  Draws paddle for the selected player at selected y coordinate
+ * Input:    Selected player and paddle height
+ * Returns:  none
+ **********************************************************************/
 void drawPaddle(uint8_t player, uint8_t y)
 {
     switch (player)
@@ -13,6 +19,12 @@ void drawPaddle(uint8_t player, uint8_t y)
     }
 }
 
+/**********************************************************************
+ * Function: erasePaddle()
+ * Purpose:  Erases paddle for the selected player at selected y coordinate
+ * Input:    Selected player and paddle height
+ * Returns:  none
+ **********************************************************************/
 void erasePaddle(uint8_t player, uint8_t y)
 {
     switch (player)
@@ -26,16 +38,34 @@ void erasePaddle(uint8_t player, uint8_t y)
     }
 }
 
+/**********************************************************************
+ * Function: drawBall()
+ * Purpose:  Draws the ball
+ * Input:    Ball coordinates
+ * Returns:  none
+ **********************************************************************/
 void drawBall(uint8_t x, uint8_t y)
 {
     oled_fillCircle(x, y, BALL_SIZE, WHITE);
 }
 
+/**********************************************************************
+ * Function: eraseBall()
+ * Purpose:  Erases the ball
+ * Input:    Ball coordinates
+ * Returns:  none
+ **********************************************************************/
 void eraseBall(uint8_t x, uint8_t y)
 {
     oled_fillCircle(x, y, BALL_SIZE, BLACK);
 }
 
+/**********************************************************************
+ * Function: displayScore()
+ * Purpose:  Displays the score
+ * Input:    Score of both players
+ * Returns:  none
+ **********************************************************************/
 void displayScore(uint8_t score1, uint8_t score2)
 {
     char string[2];    
@@ -47,6 +77,12 @@ void displayScore(uint8_t score1, uint8_t score2)
     oled_puts(string);
 }
 
+/**********************************************************************
+ * Function: playerWon()
+ * Purpose:  Displays who won
+ * Input:    Winner
+ * Returns:  none
+ **********************************************************************/
 void playerWon(uint8_t player)
 {
     switch (player)
@@ -70,6 +106,11 @@ void playerWon(uint8_t player)
     oled_puts("to return to Menu");
 }
 
+/**********************************************************************
+ * Function: ballOut()
+ * Purpose:  Displays text after the round ended
+ * Returns:  none
+ **********************************************************************/
 void ballOut()
 {
     oled_gotoxy(2, 4);
@@ -78,6 +119,11 @@ void ballOut()
     oled_puts("to reset");
 }
 
+/**********************************************************************
+ * Function: displayMenu()
+ * Purpose:  Displays the main menu
+ * Returns:  none
+ **********************************************************************/
 void displayMenu()
 {
     oled_gotoxy(6, 0);
