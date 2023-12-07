@@ -1,5 +1,11 @@
 #include "pong_physics.h"
 
+/**********************************************************************
+ * Function: borderCollision()
+ * Purpose:  Detects if there is a collision with the border (only takes in the y coordinate)
+ * Input:    Ball position and direction - y
+ * Returns:  Bool return - true if there is a collision
+ **********************************************************************/
 int8_t borderCollision(uint8_t ballPosY, int8_t *directionY)
 {
     if(ballPosY <= BALL_SIZE)
@@ -15,6 +21,12 @@ int8_t borderCollision(uint8_t ballPosY, int8_t *directionY)
     else return 0;    
 }
 
+/**********************************************************************
+ * Function: paddleCollision()
+ * Purpose:  Detects if there is a collision with a paddle of the selected player
+ * Input:    Selected player, ball and paddle position, pointer to ball direction - x, pointer to isBehindPaddle
+ * Returns:  Bool return - true if there is a collision
+ **********************************************************************/
 int8_t paddleCollision(uint8_t player, uint8_t ballPosX, uint8_t ballPosY, uint8_t paddlePos, int8_t *directionX, uint8_t *isBehindPaddle)
 {
     switch (player)
@@ -61,6 +73,12 @@ int8_t paddleCollision(uint8_t player, uint8_t ballPosX, uint8_t ballPosY, uint8
     
 }
 
+/**********************************************************************
+ * Function: calcBallPos()
+ * Purpose:  Calculates the ball position
+ * Input:    Ball position and direction
+ * Returns:  none
+ **********************************************************************/
 void calcBallPos(int8_t directionX, int8_t directionY, uint8_t *ballPosX, uint8_t *ballPosY)
 {
     *ballPosX += directionX;
