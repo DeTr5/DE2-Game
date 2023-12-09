@@ -10,8 +10,15 @@
  * This work is licensed under the terms of the MIT license.
  * 
  **********************************************************************/
-
-
+/**
+ * @mainpage
+ * 
+ * Simple arcade game of Pong for ATmega328P (Arduino Uno). The game is played on an OLED display with four buttons.
+ * 
+ * @author Matej Hrdlicka, Samuel Blecha
+ * @copyright (c) 2023 Matej Hrdlicka, Samuel Blecha, This work is licensed under 
+ *                the terms of the MIT license
+ */
 /* Defines -----------------------------------------------------------*/
 #ifndef F_CPU
 # define F_CPU 16000000  // CPU frequency in Hz required for UART_BAUD_SELECT
