@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DE-2_Simple_Arcade_Game: DE2-Game/lib/pong_engine/pong_physics.h Source File</title>
+<title>DE-2_Simple_Arcade_Game: C:/Users/Admin/Documents/GitHub/DE2-Game/DE2-Game/lib/pong_engine/pong_physics.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -52,19 +52,23 @@ $(document).ready(function() { init_codefold(0); });
   <div class="headertitle"><div class="title">pong_physics.h</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#ifndef PONG_ENGINE</span></div>
+<a href="pong__physics_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#ifndef PONG_ENGINE</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#define PONG_ENGINE</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;inttypes.h&gt;</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;pong_graphics.h&quot;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>int8_t borderCollision(uint8_t ballPosY, int8_t *directionY);</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>int8_t paddleCollision(uint8_t player, uint8_t ballPosX, uint8_t ballPosY, uint8_t paddlePos, int8_t *directionX, uint8_t *isBehindPaddle);</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="keywordtype">void</span> calcBallPos(int8_t directionX, int8_t directionY, uint8_t *ballPosX, uint8_t *ballPosY);</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="preprocessor">#include &lt;inttypes.h&gt;</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#include &quot;<a class="code" href="pong__graphics_8h.html">pong_graphics.h</a>&quot;</span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>int8_t <a class="code hl_function" href="group__pong.html#ga9b07a5caf071ef70b932ffbb21967905">borderCollision</a>(uint8_t ballPosY, int8_t *directionY);</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>int8_t <a class="code hl_function" href="group__pong.html#ga5b96674d45ab84d9ec35a105b6ba9795">paddleCollision</a>(uint8_t player, uint8_t ballPosX, uint8_t ballPosY, uint8_t paddlePos, int8_t *directionX, uint8_t *isBehindPaddle);</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__pong.html#ga8b66f932d90009641081d97312077b72">calcBallPos</a>(int8_t directionX, int8_t directionY, uint8_t *ballPosX, uint8_t *ballPosY);</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span><span class="preprocessor">#endif</span></div>
+<div class="ttc" id="agroup__pong_html_ga5b96674d45ab84d9ec35a105b6ba9795"><div class="ttname"><a href="group__pong.html#ga5b96674d45ab84d9ec35a105b6ba9795">paddleCollision</a></div><div class="ttdeci">int8_t paddleCollision(uint8_t player, uint8_t ballPosX, uint8_t ballPosY, uint8_t paddlePos, int8_t *directionX, uint8_t *isBehindPaddle)</div><div class="ttdoc">Detects if there is a collision with a paddle of the selected player.</div><div class="ttdef"><b>Definition</b> pong_physics.c:30</div></div>
+<div class="ttc" id="agroup__pong_html_ga8b66f932d90009641081d97312077b72"><div class="ttname"><a href="group__pong.html#ga8b66f932d90009641081d97312077b72">calcBallPos</a></div><div class="ttdeci">void calcBallPos(int8_t directionX, int8_t directionY, uint8_t *ballPosX, uint8_t *ballPosY)</div><div class="ttdoc">Calculates the ball position.</div><div class="ttdef"><b>Definition</b> pong_physics.c:82</div></div>
+<div class="ttc" id="agroup__pong_html_ga9b07a5caf071ef70b932ffbb21967905"><div class="ttname"><a href="group__pong.html#ga9b07a5caf071ef70b932ffbb21967905">borderCollision</a></div><div class="ttdeci">int8_t borderCollision(uint8_t ballPosY, int8_t *directionY)</div><div class="ttdoc">Detects if there is a collision with the border (only takes in the y coordinate)</div><div class="ttdef"><b>Definition</b> pong_physics.c:9</div></div>
+<div class="ttc" id="apong__graphics_8h_html"><div class="ttname"><a href="pong__graphics_8h.html">pong_graphics.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
