@@ -1,6 +1,21 @@
 #ifndef PONG_GRAPHICS_H
 #define PONG_GRAPHICS_H
 
+/**
+ * @file 
+ * @defgroup pong Pong graphics library <pong_graphics.h>
+ * @code #include <pong_graphics.h> @endcode
+ *
+ * @brief Pong graphics library.
+ *
+ * The library contains functions for drawing elements to play the Pong game.
+ *
+ * @author Matej Hrdlicka, Samuel Blecha, Dept. of Radio Electronics, Brno University 
+ *         of Technology, Czechia
+ * @copyright (c) 2023 Matej Hrdlicka, Samuel Blecha, This work is licensed under 
+ *                the terms of the MIT license
+ * @{
+ */
 #include <inttypes.h>
 #include <oled.h>
 
@@ -71,5 +86,7 @@ extern void ballOut();
  * @return none
  */
 extern void displayMenu();
+
+/** @} */
 
 #endif

@@ -1,6 +1,21 @@
 #ifndef PONG_ENGINE
 #define PONG_ENGINE
 
+/**
+ * @file 
+ * @defgroup pong Pong physics library <pong_physics.h>
+ * @code #include <pong_physics.h> @endcode
+ *
+ * @brief Pong physics library.
+ *
+ * The library contains functions for calculating physics needed to play the Pong game.
+ *
+ * @author Matej Hrdlicka, Samuel Blecha, Dept. of Radio Electronics, Brno University 
+ *         of Technology, Czechia
+ * @copyright (c) 2023 Matej Hrdlicka, Samuel Blecha, This work is licensed under 
+ *                the terms of the MIT license
+ * @{
+ */
 #include <inttypes.h>
 #include "pong_graphics.h"
 
@@ -36,5 +51,7 @@ int8_t paddleCollision(uint8_t player, uint8_t ballPosX, uint8_t ballPosY, uint8
  * @return none
  */
 void calcBallPos(int8_t directionX, int8_t directionY, uint8_t *ballPosX, uint8_t *ballPosY);
+
+/** @} */
 
 #endif
