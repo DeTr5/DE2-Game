@@ -3,7 +3,7 @@
 
 /**
  * @file 
- * @defgroup pong Pong physics library <pong_physics.h>
+ * @defgroup pong_physics Pong physics library <pong_physics.h>
  * @code #include <pong_physics.h> @endcode
  *
  * @brief Pong physics library.
