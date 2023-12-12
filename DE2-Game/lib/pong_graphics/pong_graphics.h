@@ -3,7 +3,7 @@
 
 /**
  * @file 
- * @defgroup pong Pong graphics library <pong_graphics.h>
+ * @defgroup pong_graphics Pong graphics library <pong_graphics.h>
  * @code #include <pong_graphics.h> @endcode
  *
  * @brief Pong graphics library.
