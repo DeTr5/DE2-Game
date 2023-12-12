@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DE-2_Simple_Arcade_Game: DE2-Game</title>
+<title>DE-2_Simple_Arcade_Game: Simple arcade game - DE2 project</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -40,10 +40,34 @@ $(function() {
 <div id="main-nav"></div>
 </div><!-- top -->
 <div><div class="header">
-  <div class="headertitle"><div class="title">DE2-Game</div></div>
+  <div class="headertitle"><div class="title">Simple arcade game - DE2 project</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="autotoc_md0"></a></p>
+<div class="textblock"><p><a class="anchor" id="autotoc_md0"></a> </p>
+<h2><a class="anchor" id="autotoc_md1"></a>
+Team members</h2>
+<ul>
+<li>Matěj Hrdlička</li>
+<li>Samuel Blecha</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md2"></a>
+Theoretical description and explanation</h1>
+<p>The goal of the project was to create a simple arcade game - in our case the Pong game. This Pong game is for 2 players. The game is played on OLED display and each player has two buttons. The goal of the game is to move your paddle up or down to bounce the ball to the other side of the screen where the other player has his paddle. If you miss the ball, your oponent gets a point. If you collect 5 points, you win.</p>
+<h1><a class="anchor" id="autotoc_md3"></a>
+Hardware description of demo application</h1>
+<p>The OLED display is connected to Arduino using UART. The buttons are connected on port B to the pins 0 - 3.</p>
+<h1><a class="anchor" id="autotoc_md4"></a>
+Software description</h1>
+<p>Libraries:</p>
+<ul>
+<li>gpio - used to access values on digital pins</li>
+<li>oled - writes and draws on the OLED display - includes twi and uart libraries</li>
+<li>pong_engine - calculates physics of the game and draws game objects on the screen, includes pong_graphics library</li>
+</ul>
+<p>The main code is in timer1 overflow function. This is because of the need to run the game in a constant framerate.</p>
+<h1><a class="anchor" id="autotoc_md5"></a>
+Instructions</h1>
+<p>Only the four buttons are needed to operate the game. In menu, simply press any button to start a new game. After a round you need to just press any button to start the next round. </p>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
 <!-- start footer part -->
