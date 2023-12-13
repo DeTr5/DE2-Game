@@ -26,3 +26,5 @@ The main code is in timer1 overflow function. This is because of the need to run
 ## Instructions
 
 Only the four buttons are needed to operate the game. In menu, simply press any button to start a new game. After a round you need to just press any button to start the next round.
+
+https://drive.google.com/file/d/1IPwJwsJ_EZ-hXsV55nXo5yBYHyMl_1Y9/view?usp=drivesdk
